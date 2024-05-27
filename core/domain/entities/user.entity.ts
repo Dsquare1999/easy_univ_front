@@ -1,3 +1,5 @@
+import { RequestState } from "./request.entity";
+
 export interface UserEntity {
     nom : string;
     prenoms : string;
@@ -27,4 +29,9 @@ export interface UserEntity {
     date_de_derniere_modification : Date | string;
     cree_par : string;
     modifie_par : string;
+}
+
+export interface UserState {
+    isLoggedIn : boolean;
+    status : RequestState["PENDING"] | RequestState["FULFILLED"] | RequestState["REJECTED"];
 }

@@ -1,5 +1,6 @@
 import { AuthOptions, NextAuthOptions, User } from "next-auth";
 import { CredentialsProvider } from "next-auth/providers/credentials";
+
 import { jwtDecode } from "jwt-decode";
 
 export const authConfig : AuthOptions = {
@@ -23,7 +24,7 @@ export const authConfig : AuthOptions = {
                     if (error.response.status === 401) {
                         throw new Error("Adresse mail ou mot de passe incorrect")
                     }else{
-                        throw new Error("Une erreur s'est produite")
+                        throw new Error("Une erreur s'est produite") 
                     }
                 }
             

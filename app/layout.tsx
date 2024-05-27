@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
 
+import { Provider } from "react-redux";
+import { store } from "@/core/application/store";
 import { ThemeProvider } from "@/components/theme-provider"
 
 const inter = Poppins({ 
@@ -28,7 +30,9 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <Provider store={store}>
+             {children}
+          </Provider>
         </ThemeProvider>
       </body>
     </html>
