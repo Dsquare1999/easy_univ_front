@@ -1,5 +1,5 @@
 import { AuthOptions, NextAuthOptions, User } from "next-auth";
-import { CredentialsProvider } from "next-auth/providers/credentials";
+import  CredentialsProvider from "next-auth/providers/credentials";
 
 import { jwtDecode } from "jwt-decode";
 
@@ -11,7 +11,7 @@ export const authConfig : AuthOptions = {
                 email: { label: "Email", type: "email", placeholder: "johndoe@gmail.com" },
                 password: { label: "Password", type: "password" },
             },
-            authorize: async (credentials) : Promise<User> => {
+            authorize: async (credentials, req) : Promise<User> => {
                 let token;
                 try {
                     if(!credentials?.email || !credentials?.password) {
@@ -28,42 +28,46 @@ export const authConfig : AuthOptions = {
                     }
                 }
             
-                const decodeToken = jwt_decode(token?.access?? '') as Partial<User & {user_id: string}>
+                const decodeToken = jwtDecode(token?.access?? '') as Partial<User & {user_id: string}>
 
                 if(decodeToken?.user_id){
                     return {
                         id: decodeToken.user_id ?? "",
                         email: credentials?.email,
-                        name: token?.access ?? "",
-                        image: decodeToken.image,
-                    }
+                        token: token?.access ?? "",
+                        refreshToken: token?.refresh,
+                    } as User 
                 }   
                 throw new Error("Une erreur s'est produite")
             }
         })
     ],
     callbacks: {
-        async session({session, token}) {
-            return {
-                ...session,
-                user: {
-                    id: token?.id,
-                    token: token?.accessToken ?? "",
-                    refreshToken: token.refreshToken ?? ""
-
-                }
-            }
+        async session({ session, token }) {
+            // return {
+            //     ...session,
+            //     user: {
+            //         name: "", 
+            //         email: "",
+            //         image: "",
+            //         id: token?.id,
+            //         token: token?.accessToken ?? "",
+            //         refreshToken: token.refreshToken ?? ""
+            //     }
+            // };
+            console.log("Session : ", session)
+            return session
         },
         async jwt({token, user, account}) {
-            if (user && account) {
-                token = {
-                    ...token,
-                    id = user.id,
-                    accessToken = user.token ?? "",
-                    refreshToken = user.refreshToken ?? ""
-                }
-            }
-
+            // if (user && account) {
+            //     token = {
+            //         ...token,
+            //         id: user.id,
+            //         accessToken: user.token ?? "",
+            //         refreshToken: user.refreshToken ?? ""
+            //     }
+            // }
+            console.log("Token : ", token)
             return token
         }
     },
