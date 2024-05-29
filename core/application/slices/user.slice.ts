@@ -1,6 +1,7 @@
 import { UserState } from "@/core/domain/entities/user.entity";
 import { RequestEnum } from "@/core/domain/enums/request.enum";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { userLogin } from "../actions";
 
 const initialState: UserState = {
   isLoggedIn: false,
@@ -18,6 +19,18 @@ const userSlice = createSlice({
     setStatus: (state, action: PayloadAction<UserState["status"]>) => {
       state.status = action.payload;
     },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(userLogin.pending, (state) => {
+      state.status = RequestEnum.PENDING;
+    });
+    builder.addCase(userLogin.fulfilled, (state) => {
+      state.isLoggedIn = true;
+      state.status = RequestEnum.FULFILLED;
+    });
+    builder.addCase(userLogin.rejected, (state) => {
+      state.status = RequestEnum.REJECTED;
+    });
   },
 });
 

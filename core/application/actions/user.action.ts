@@ -1,19 +1,17 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
+import { useLoginMutation } from "@/core/infra/api";
 
 export const login = createAsyncThunk(
   "user/login",
   async (payload: { email: string; password: string }, thunkAPI) => {
-    const response = await fetch("http://localhost:3000/login", {
-      method: "POST",
-      body: JSON.stringify(payload),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    if (response.ok) {
-      return await response.json();
-    } else {
-      return thunkAPI.rejectWithValue(await response.json());
-    }
+    const [login, { isLoading }] = useLoginMutation();
+
+    const response = await login(payload);
+    console.log(response);
+    // if (response.ok) {
+    //   return await response.json();
+    // } else {
+    //   return thunkAPI.rejectWithValue(await response.json());
+    // }
   }
 );

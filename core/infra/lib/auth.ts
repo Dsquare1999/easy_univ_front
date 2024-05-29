@@ -2,6 +2,7 @@ import { AuthOptions, NextAuthOptions, User } from "next-auth";
 import  CredentialsProvider from "next-auth/providers/credentials";
 
 import { jwtDecode } from "jwt-decode";
+import { userLogin } from "@/core/application/actions";
 
 export const authConfig : AuthOptions = {
     providers: [
@@ -17,7 +18,8 @@ export const authConfig : AuthOptions = {
                     if(!credentials?.email || !credentials?.password) {
                         throw new Error("L'adresse mail et le mot de passe sont requis")
                     }
-                    token = await login(credentials.email, credentials.password)
+                    token = await userLogin(credentials)
+                    console.log("Token : ", token)
 
                 } catch (error : any) {
                     console.log(error.response.status);
@@ -27,18 +29,25 @@ export const authConfig : AuthOptions = {
                         throw new Error("Une erreur s'est produite") 
                     }
                 }
+                return {
+                    id: credentials?.email ?? "",
+                    email: credentials?.email,
+                    token: credentials?.email,
+                    refreshToken: credentials?.email,
+                    } as User
+                
             
-                const decodeToken = jwtDecode(token?.access?? '') as Partial<User & {user_id: string}>
+                // const decodeToken = jwtDecode(token?.access ?? '') as Partial<User & {user_id: string}>
 
-                if(decodeToken?.user_id){
-                    return {
-                        id: decodeToken.user_id ?? "",
-                        email: credentials?.email,
-                        token: token?.access ?? "",
-                        refreshToken: token?.refresh,
-                    } as User 
-                }   
-                throw new Error("Une erreur s'est produite")
+                // if(decodeToken?.user_id){
+                //     return {
+                //         id: decodeToken.user_id ?? "",
+                //         email: credentials?.email,
+                //         token: token?.access ?? "",
+                //         refreshToken: token?.refresh,
+                //     } as User 
+                // }   
+                // throw new Error("Une erreur s'est produite")
             }
         })
     ],
